@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOMServer from 'react-dom/server';
 import Helmet from 'react-helmet';
-import { matchPath, StaticRouter } from 'react-router-dom';
+import { StaticRouter } from 'react-router-dom';
 import { Document as DefaultDoc } from './Document';
 import { After } from './After';
 import { loadInitialProps } from './loadInitialProps';
@@ -65,11 +65,9 @@ export async function render<T>(options: AfterRenderOptions<T>) {
   if (match.path === '**') {
     res.status(404);
   } else if (match && match.redirectTo && match.path) {
-    res.redirect(301, req.originalUrl.replace(match.path, match.redirectTo));
+    res.redirect(301, req.originalUrl.replace(match.path as any, match.redirectTo));
     return;
   }
-
-  const reactRouterMatch = matchPath(req.url, match);
 
   const { html, ...docProps } = await Doc.getInitialProps({
     req,
@@ -78,7 +76,7 @@ export async function render<T>(options: AfterRenderOptions<T>) {
     renderPage,
     data,
     helmet: Helmet.renderStatic(),
-    match: reactRouterMatch,
+    match: match as any,
     ...rest
   });
 
